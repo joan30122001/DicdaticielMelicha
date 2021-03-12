@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 # from users.authentication import JwtAuthenticatedUser
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.parsers import FileUploadParser
 
 
 class FormationViewSet(viewsets.ViewSet):
@@ -143,14 +144,25 @@ class CourseViewSet(viewsets.ViewSet):
 class FileUploadView(APIView):
     # authentication_classes = [JwtAuthenticatedUser]
     # permission_classes = [IsAuthenticated]
-    parser_classes = (JSONParser, )
+    # parser_classes = (JSONParser, )
 
-    def post(self, request):
-        file = request.FILES['image']
-        file_name = default_storage.save(file.name, file)
-        url = default_storage.url(file_name)
+    # def post(self, request):
+    #     file = request.FILES['image']
+    #     file_name = default_storage.save(file.name, file)
+    #     url = default_storage.url(file_name)
 
-        return Response({
-            'url': url
-        })
+    #     return Response({
+    #         'url': url
+    #     })
+
+
+    parser_class = (FileUploadParser,)
+
+    def post(self, request, *args, **kwargs):
+        file_serializer = FormationSerializer(data=request.data)
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

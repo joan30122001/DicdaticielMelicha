@@ -15,13 +15,13 @@ class Game(models.Model):
 
 class Course(models.Model):
     GENRE_CHOICES = (
-        ('masculin', 'Masculin'),
-        ('feminin', 'Feminin'),
+        ('image', 'Image'),
+        ('video', 'Video'),
     )
     title = models.CharField(max_length=255)
     types = models.CharField(max_length=10,
                              choices=GENRE_CHOICES,
-                             default='masculin'
+                             default='image'
     )
     formation = models.ForeignKey(Formation, on_delete=models.CASCADE)
 
